@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SpreadsheetExport.Attributes
+namespace AtrumSoft.SpreadsheetExport.Attributes
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public class SpreadsheetColumnAttribute : Attribute

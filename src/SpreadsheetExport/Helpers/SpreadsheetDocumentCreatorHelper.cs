@@ -4,9 +4,9 @@ using System.Linq;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Spreadsheet;
 
-namespace SpreadsheetExport.Helpers
+namespace AtrumSoft.SpreadsheetExport.Helpers
 {
-    internal class SpreadsheetDocumentCreatorHelper
+    internal static class SpreadsheetDocumentCreatorHelper
     {
         private static void SetCellValue(CellType cell, object value, OpenXmlElement sharedStringTable, string type)
         {

@@ -7,14 +7,15 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using AtrumSoft.SpreadsheetExport.Attributes;
+using AtrumSoft.SpreadsheetExport.Helpers;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using SpreadsheetExport.Attributes;
-using SpreadsheetExport.Helpers;
+
 // ReSharper disable PossiblyMistakenUseOfParamsMethod
 
-namespace SpreadsheetExport
+namespace AtrumSoft.SpreadsheetExport
 {
     public class SpreadsheetExportFromType<T>
     {
@@ -121,18 +122,15 @@ namespace SpreadsheetExport
 
         private static Dictionary<PropertyInfo, double> GetMaxLenghtPropertyDictionary(IEnumerable<PropertyInfo> props, IEnumerable<T> source)
         {
-            const double ColumnRelativeWidth = 1.3;
+            const double columnRelativeWidth = 1.3;
             return props.ToDictionary(p => p,
                 p =>
                 {
                     var maxlenght = Maxlenght(source.ToArray(), p);
                     var header = GetHeader(p);
-                    //var attr = p.GetCustomAttributes(true).OfType<SpreadsheetColumnAttribute>().FirstOrDefault();
-                    //if (!string.IsNullOrWhiteSpace(attr?.ColumnHeader) && attr.ColumnHeader.Length > maxlenght)
-                    //    return attr.ColumnHeader.Length * 1.1;
                     if (header.Length > maxlenght)
-                        return header.Length* ColumnRelativeWidth;
-                    return maxlenght * ColumnRelativeWidth;
+                        return header.Length* columnRelativeWidth;
+                    return maxlenght * columnRelativeWidth;
                 });
         }
 

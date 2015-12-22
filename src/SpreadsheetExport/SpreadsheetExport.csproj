@@ -7,7 +7,7 @@
     <ProjectGuid>{D5AD538B-869C-4F75-8EE0-F647D2065DBF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SpreadsheetExport</RootNamespace>
+    <RootNamespace>AtrumSoft.SpreadsheetExport</RootNamespace>
     <AssemblyName>SpreadsheetExport</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

@@ -1,9 +1,10 @@
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+
 // ReSharper disable PossiblyMistakenUseOfParamsMethod
 
-namespace SpreadsheetExport.Helpers
+namespace AtrumSoft.SpreadsheetExport.Helpers
 {
     internal static class SpreadsheetStyleHelper
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
-using SpreadsheetExport.Attributes;
+using AtrumSoft.SpreadsheetExport.Attributes;
 
 namespace SpreadsheetExport.Tests.Entities
 {

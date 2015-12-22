@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SpreadsheetExport.Attributes
+namespace AtrumSoft.SpreadsheetExport.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public class SpreadsheetInfoAttribute : Attribute
