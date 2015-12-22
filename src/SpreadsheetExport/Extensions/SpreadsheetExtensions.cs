@@ -22,5 +22,17 @@ namespace SpreadsheetExport.Extensions
             exportTool.Generate();
             return stream.ToArray();
         }
+
+        public static void TemplateFor<T>(string filename)
+        {
+            var emptyEnumerable = Enumerable.Empty<T>();
+            emptyEnumerable.ToSpreadsheet(filename);
+        }
+
+        public static byte[] TemplateFor<T>()
+        {
+            var emptyEnumerable = Enumerable.Empty<T>();
+            return emptyEnumerable.ToSpreadsheet();
+        }
     }
 }

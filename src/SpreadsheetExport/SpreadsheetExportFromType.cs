@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -120,19 +121,30 @@ namespace SpreadsheetExport
 
         private static Dictionary<PropertyInfo, double> GetMaxLenghtPropertyDictionary(IEnumerable<PropertyInfo> props, IEnumerable<T> source)
         {
+            const double ColumnRelativeWidth = 1.3;
             return props.ToDictionary(p => p,
                 p =>
                 {
-                    var maxlenght = source.Max(e =>
-                    {
-                        var value = p.GetValue(e, null);
-                        return value == null ? 0 : Regex.Replace(value.ToString(), @"\s+", "").Length;
-                    });
-                    var attr = p.GetCustomAttributes(true).OfType<SpreadsheetColumnAttribute>().FirstOrDefault();
-                    if (!string.IsNullOrWhiteSpace(attr?.ColumnHeader) && attr.ColumnHeader.Length > maxlenght)
-                        return attr.ColumnHeader.Length * 1.1;
-                    return maxlenght * 1.3;
+                    var maxlenght = Maxlenght(source.ToArray(), p);
+                    var header = GetHeader(p);
+                    //var attr = p.GetCustomAttributes(true).OfType<SpreadsheetColumnAttribute>().FirstOrDefault();
+                    //if (!string.IsNullOrWhiteSpace(attr?.ColumnHeader) && attr.ColumnHeader.Length > maxlenght)
+                    //    return attr.ColumnHeader.Length * 1.1;
+                    if (header.Length > maxlenght)
+                        return header.Length* ColumnRelativeWidth;
+                    return maxlenght * ColumnRelativeWidth;
                 });
+        }
+
+        private static int Maxlenght(T[] source, PropertyInfo p)
+        {
+            if (!source.Any())
+                return 0;
+            return source.Max(e =>
+            {
+                var value = p.GetValue(e, null);
+                return value == null ? 0 : Regex.Replace(value.ToString(), @"\s+", "").Length;
+            });
         }
 
         private static List<PropertyInfo> ExtractProperties()
@@ -149,7 +161,7 @@ namespace SpreadsheetExport
             return attr != null ? attr.SheetTitle : typeof(T).Name;
         }
 
-        private void AppendRow(OpenXmlElement sheetData, SharedStringTable sharedStringTable, T element, IEnumerable<PropertyInfo> propertyList, UInt32Value counter)
+        private static void AppendRow(OpenXmlElement sheetData, SharedStringTable sharedStringTable, T element, IEnumerable<PropertyInfo> propertyList, UInt32Value counter)
         {
             var firstChar = 65;
             var row = new Row { RowIndex = counter };
@@ -199,20 +211,34 @@ namespace SpreadsheetExport
             return value;
         }
 
-        private void AppendHeaders(OpenXmlElement sheetData, SharedStringTable sharedStringTable, IEnumerable<PropertyInfo> propertyList)
+        private static void AppendHeaders(OpenXmlElement sheetData, SharedStringTable sharedStringTable, IEnumerable<PropertyInfo> propertyList)
         {
             var firstChar = 65;
             var row = new Row { RowIndex = 1 };
             foreach (var prop in propertyList)
             {
                 var nextCell = $"{Convert.ToChar(firstChar)}{1}";
-                var valueAttr = prop.GetCustomAttributes(true).OfType<SpreadsheetColumnAttribute>().FirstOrDefault();
-                var value = valueAttr == null ? prop.Name : valueAttr.ColumnHeader;
+
+                var value = GetHeader(prop);
                 var type = prop.PropertyType.FullName;
                 row.Append(CreateCell(value, sharedStringTable, nextCell, type));
                 firstChar++;
             }
             sheetData.Append(row);
+        }
+
+        private static string GetHeader(PropertyInfo prop)
+        {
+            var valueAttr = prop.GetCustomAttributes(true).OfType<SpreadsheetColumnAttribute>().FirstOrDefault();
+            var displayNameAttr = prop.GetCustomAttributes(true).OfType<DisplayNameAttribute>().FirstOrDefault();
+            string value;
+            if (valueAttr != null)
+                value = valueAttr.ColumnHeader;
+            else if (displayNameAttr != null)
+                value = displayNameAttr.DisplayName;
+            else
+                value = prop.Name;
+            return value;
         }
 
         private static Columns ConfigureColumns(IEnumerable<KeyValuePair<PropertyInfo, double>> propertyList)
@@ -228,7 +254,7 @@ namespace SpreadsheetExport
             return columns1;
         }
 
-        private Cell CreateCell(object value, SharedStringTable sharedStringTable, string nextCell, string type, bool isHeader = false)
+        private static Cell CreateCell(object value, SharedStringTable sharedStringTable, string nextCell, string type, bool isHeader = false)
         {
             return SpreadsheetDocumentCreatorHelper.CreateCell(value, sharedStringTable, nextCell, type, isHeader ? 0U : 1U);
         }
