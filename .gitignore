@@ -1,0 +1,15 @@
+*.suo
+*.user
+bin/
+obj/
+Cosacos/CosacosMVC/Sites/
+packages/
+.vs/
+
+# Windows Azure Build Output
+csx/
+
+# Windows Azure Emulator
+efc/
+rfc/
+rcf/
